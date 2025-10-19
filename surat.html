@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senarai Surat Rasmi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0a2e63;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header, footer {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      background-image: url('files/surat/digital.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      padding: 2rem;
+      backdrop-filter: blur(6px);
+      width: 100%;
+      max-width: 900px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #1e40af;
+      color: white;
+      padding: 10px;
+      text-align: left;
+    }
+
+    td {
+      padding: 10px;
+      vertical-align: top;
+    }
+
+    td:last-child {
+      text-align: center;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-blue-900 text-white py-4 shadow-md">
+    <div class="max-w-6xl mx-auto flex items-center justify-center space-x-4">
+      <h1 class="text-2xl font-bold">SENARAI SURAT</h1>
+    </div>
+  </header>
+
+  <!-- KANDUNGAN -->
+  <main>
+    <div class="card">
+      <div class="flex justify-between items-center mb-4">
+        <button onclick="window.history.back()" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 transition">
+          ← Kembali ke Halaman Utama
+        </button>
+        <div class="flex space-x-2">
+          <a href="files/surat/header_surat.docx" download class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            Download Header Surat
+          </a>
+          <button onclick="window.location.href='upload.html'" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+            + Tambah Surat
+          </button>
+        </div>
+      </div>
+
+      <h2 class="text-2xl font-bold text-center mb-4 text-gray-800">
+        SENARAI SURAT RASMI
+      </h2>
+
+      <div class="flex justify-center mb-6">
+        <select id="kategoriSelect" onchange="paparKategori()" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-72">
+          <option value="">-- Pilih Jenis Surat --</option>
+          <option value="iringan">Surat Iringan</option>
+          <option value="tujuan">Surat Tujuan Perbengkelan</option>
+          <option value="waran">Surat Waran Peruntukan</option>
+          <option value="pinjaman">Surat Pinjaman Tempat</option>
+          <option value="lain">Surat Lain-lain</option>
+        </select>
+      </div>
+
+      <div id="jadualContainer" class="hidden">
+        <table class="border border-gray-300 rounded-lg text-sm">
+          <thead>
+            <tr>
+              <th>Bil</th>
+              <th>Tajuk Surat</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="jadualIsi" class="bg-white"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-blue-900 text-white text-center py-3">
+    <p class="text-sm">&copy; 2025 Pejabat Pendidikan Daerah Pasir Gudang | Semua Hak Cipta Terpelihara</p>
+  </footer>
+
+  <script>
+    const dataSurat = {
+      iringan: [
+        { 
+          tajuk: "Makluman Hebahan Dan Menyebarluas Inovasi Buku Cerita Pemakanan Sihat Sekolah Secara Digital Di Sekolah Negeri Johor", 
+          doc: "files/surat/surat_iringan1.docx" 
+        },
+        { 
+          tajuk: "Makluman Mengenai Pelaksanaan Kempen Jom Baca 10 Minit Dan Pertandingan Video Kreatif Membaca Beserta Caption Menarik Sempena Karnival Baca Perdana 2025 Kategori Sekolah Rendah Dan Menengah", 
+          doc: "files/surat/surat_iringan2.docx" 
+        },
+      ],
+      tujuan: [
+        { tajuk: "Pertandingan Inovasi Akhbar dalam PdPc Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_tujuan1.docx" },
+        { 
+          tajuk: "Bengkel Looker Studio Dashboard Pengurusan (bersama lampiran)", doc: "files/surat/surat_tujuan2.docx" 
+        },
+        { 
+          tajuk: "Bengkel Kerja Canva Education Daerah Pasir Gudang Tahun 2025 (bersama lampiran)", doc: "files/surat/surat_tujuan3.docx" 
+        },
+        { 
+          tajuk: "Bengkel Adobe Animate Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_tujuan4.docx" 
+        },
+        { 
+          tajuk: "Bengkel iPad Student Tech Leader Sekolah Rintis Bangsa Johor Tahun 2025", doc: "files/surat/surat_tujuan5.docx" 
+        }
+      ],
+      waran: [
+        { tajuk: "Surat Sub Agihan Waran Peruntukan", doc: "files/surat/surat_waran1.docx" }
+      ],
+      pinjaman: [
+        { tajuk: "Surat Permohonan Menggunakan UiTM Kampus Pasir Gudang (Inovasi Akhbar dalam PdPc)", doc: "files/surat/surat_tempat1.docx" }
+      ],
+      lain: [
+        { tajuk: "Lantikan Fasilitator Bengkel Kerja Literasi Digital: Apple Learning Summit Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_lain1.docx" },
+        { tajuk: "Lantikan Fasilitator Bengkel iPad Student Tech Leader Sekolah Rintis Bangsa Johor Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_lain2.docx" },
+        { tajuk: "Sesi Libat Urus Program Pemerkasaan Digital Murid SJKT Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_lain3.docx" },
+        { tajuk: "Sesi Libat Urus Program Pemerkasaan Digital Murid SJKC Daerah Pasir Gudang Tahun 2025", doc: "files/surat/surat_lain4.docx" }
+      ]
+    };
+
+    const suratBaru = JSON.parse(localStorage.getItem("dataSurat")) || {
+      iringan: [], tujuan: [], waran: [], pinjaman: [], lain: []
+    };
+
+    function paparKategori() {
+      const kategori = document.getElementById("kategoriSelect").value;
+      const container = document.getElementById("jadualContainer");
+      const jadualIsi = document.getElementById("jadualIsi");
+
+      if (!kategori) {
+        container.classList.add("hidden");
+        return;
+      }
+
+      const senarai = [...dataSurat[kategori], ...suratBaru[kategori]];
+      jadualIsi.innerHTML = "";
+
+      senarai.forEach((item, index) => {
+        const isBaru = suratBaru[kategori].includes(item);
+        jadualIsi.innerHTML += `
+          <tr class="border-t hover:bg-gray-50 ${isBaru ? 'bg-blue-50' : ''}">
+            <td class="py-2 px-3">${index + 1}</td>
+            <td class="py-2 px-3">${item.tajuk}</td>
+            <td class="py-2 px-3 text-center">
+              <a href="${item.doc}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 whitespace-nowrap">Download Doc</a>
+              ${isBaru ? `<button onclick="padamSurat('${kategori}', ${index - dataSurat[kategori].length})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 ml-2">Padam</button>` : ''}
+            </td>
+          </tr>
+        `;
+      });
+
+      container.classList.remove("hidden");
+    }
+
+    function padamSurat(kategori, index) {
+      if (confirm("Padam surat baru ini?")) {
+        suratBaru[kategori].splice(index, 1);
+        localStorage.setItem("dataSurat", JSON.stringify(suratBaru));
+        paparKategori();
+      }
+    }
+    import { getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const suratList = document.getElementById("suratList");
+
+const querySnapshot = await getDocs(collection(db, "surat"));
+querySnapshot.forEach((doc) => {
+  const data = doc.data();
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td class="border p-2">${data.nama}</td>
+    <td class="border p-2">
+      <a href="${data.driveLink}" target="_blank" class="text-blue-600 underline">Lihat Surat</a>
+    </td>`;
+  suratList.appendChild(row);
+});
+
+  </script>
+</body>
+</html>

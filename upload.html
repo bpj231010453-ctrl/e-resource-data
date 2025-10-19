@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muat Naik Surat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  body {
+      background: url('files/upload/digital.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    </style>
+</head>
+<body class="bg-blue-100 font-poppins min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold mb-6 text-blue-700">Muat Naik Surat Rasmi</h1>
+
+    <form id="uploadForm" class="space-y-4">
+      <input type="file" id="fileInput" accept=".pdf,.doc,.docx" required class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer" />
+      <input type="text" id="namaSurat" placeholder="Nama surat" required class="block w-full border border-gray-300 rounded-lg p-2" />
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full">Muat Naik</button>
+    </form>
+
+    <a href="surat.html" class="inline-block mt-4 text-blue-600 hover:underline">Lihat Senarai Surat</a>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBX2Ftuy62yMmvcOtKn3_UmZDLaJSDfKEI",
+      authDomain: "e-resourse-ustp.firebaseapp.com",
+      projectId: "e-resourse-ustp",
+      storageBucket: "e-resourse-ustp.firebasestorage.app",
+      messagingSenderId: "925455032139",
+      appId: "1:925455032139:web:16c156209d73c6be4d92ce",
+      measurementId: "G-J31BLHG4R8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('uploadForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = document.getElementById('fileInput').files[0];
+      const nama = document.getElementById('namaSurat').value;
+
+      if (!file) return alert("Sila pilih fail terlebih dahulu!");
+
+      const accessToken = "ya-token-sendiri"; // tukar nanti dengan token awak
+
+      const formData = new FormData();
+      formData.append('metadata', new Blob([JSON.stringify({
+        name: file.name,
+        parents: ["1lUPnrO0Ig95aviPOohQzNB6rLRE9MbUJ"] // Folder Drive awak
+      })], { type: 'application/json' }));
+      formData.append('file', file);
+
+      const upload = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
+        method: "POST",
+        headers: new Headers({ "Authorization": "Bearer " + accessToken }),
+        body: formData
+      });
+
+      const result = await upload.json();
+
+      if (result.id) {
+        await addDoc(collection(db, "surat"), {
+          nama: nama,
+          driveLink: `https://drive.google.com/file/d/${result.id}/view`
+        });
+        alert("Berjaya dimuat naik ke Drive & disimpan dalam web!");
+        form.reset();
+      } else {
+        alert("Gagal muat naik! Pastikan token sah.");
+      }
+    });
+  </script>
+</body>
+</html>
